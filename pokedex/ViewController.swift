@@ -53,6 +53,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             print(err.debugDescription)
         }
     }
+    
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCellWithReuseIdentifier("PokeCell", forIndexPath: indexPath) as? PokeCell{
             
@@ -87,12 +88,24 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         return CGSizeMake(90, 90)
     }
     
-    func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
+        let poke:Pokemon!
+        
+         if isSearching {
+            poke = filteredPokemon[indexPath.row]
+        } else {
+            poke = pokemon[indexPath.row]
+        }
+        performSegueWithIdentifier("ShowPokeDetail", sender: poke)
     }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        view.endEditing(true)
+        searchBar.endEditing(true)
+    }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        searchBar.endEditing(true)
     }
     
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
@@ -102,19 +115,26 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
         searchBar.showsCancelButton = false
     }
-    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
-        view.endEditing(true)
-    }
+
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text == nil || searchBar.text == "" {
             isSearching = false
-            view.endEditing(true)
+            searchBar.endEditing(true)
             collection.reloadData()
         } else {
             isSearching = true
             let lower = searchBar.text?.lowercaseString
             filteredPokemon = pokemon.filter({$0.name.rangeOfString(lower!) != nil})
             collection.reloadData()
+        }
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "ShowPokeDetail" {
+            if let destVC = segue.destinationViewController as? PokeDetailVC {
+                if let poke = sender as? Pokemon {
+                    destVC.pokemon = poke                }
+            }
         }
     }
 
