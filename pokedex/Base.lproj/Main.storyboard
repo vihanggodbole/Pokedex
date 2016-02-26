@@ -32,12 +32,29 @@
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gnl-j0-s4e">
+                                        <rect key="frame" x="8" y="19" width="49" height="34"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="49" id="BOY-PF-sKP"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                        <state key="normal" title="Back">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="goBack:" destination="LOQ-3T-kBa" eventType="touchUpInside" id="yjy-ok-fuw"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="1" green="0.34509803919999998" blue="0.33333333329999998" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
+                                    <constraint firstItem="gnl-j0-s4e" firstAttribute="top" secondItem="mBk-Q6-kHD" secondAttribute="top" constant="19" id="Mng-y9-ur5"/>
                                     <constraint firstAttribute="bottom" secondItem="2la-LS-7Qy" secondAttribute="bottom" constant="8" id="WBn-9H-OH5"/>
+                                    <constraint firstItem="gnl-j0-s4e" firstAttribute="leading" secondItem="mBk-Q6-kHD" secondAttribute="leading" constant="8" id="cuO-Dz-wBE"/>
                                     <constraint firstAttribute="height" constant="55" id="jbT-Qa-g1N"/>
                                     <constraint firstItem="2la-LS-7Qy" firstAttribute="centerX" secondItem="mBk-Q6-kHD" secondAttribute="centerX" id="uMr-xv-K7h"/>
+                                    <constraint firstAttribute="bottom" secondItem="gnl-j0-s4e" secondAttribute="bottom" constant="2" id="xcA-Rw-Pot"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6ec-k4-zlq">
@@ -343,6 +360,20 @@
                             </mask>
                         </variation>
                     </view>
+                    <connections>
+                        <outlet property="attackLabel" destination="wh9-Tz-15W" id="j0g-y8-Yqv"/>
+                        <outlet property="defenseLabel" destination="jBM-P2-lCn" id="ZVA-kG-LOk"/>
+                        <outlet property="descriptionLabel" destination="QzH-cC-72r" id="gug-lM-Kai"/>
+                        <outlet property="heightLabel" destination="Dhg-3n-Zcc" id="TYO-dQ-HSk"/>
+                        <outlet property="mainImage" destination="GAi-gZ-9ws" id="cW9-CH-lsO"/>
+                        <outlet property="nameLabel" destination="2la-LS-7Qy" id="XrQ-s8-Ikm"/>
+                        <outlet property="nextEvoImage" destination="gXr-bM-0ld" id="HKy-t0-5Ii"/>
+                        <outlet property="nextEvoLabel" destination="yTP-1G-qOv" id="bYz-da-ZIt"/>
+                        <outlet property="pokeIdLabel" destination="JUv-BF-kcQ" id="nFp-88-spL"/>
+                        <outlet property="thirdEvoImage" destination="J3l-3x-VA3" id="Swn-hB-RZF"/>
+                        <outlet property="typeLabel" destination="csS-Ec-ucE" id="bK9-HN-cOX"/>
+                        <outlet property="weightLabel" destination="HjJ-hO-Efo" id="ooY-g4-bkx"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="amA-0j-83K" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
