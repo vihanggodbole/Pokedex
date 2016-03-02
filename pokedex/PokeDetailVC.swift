@@ -19,9 +19,7 @@ class PokeDetailVC: UIViewController {
     @IBOutlet weak var heightLabel: UILabel!
     @IBOutlet weak var weightLabel: UILabel!
     @IBOutlet weak var pokeIdLabel: UILabel!
-    @IBOutlet weak var nextEvoLabel: UILabel!
-    @IBOutlet weak var nextEvoImage: UIImageView!
-    @IBOutlet weak var thirdEvoImage: UIImageView!
+
 
     
     var pokemon: Pokemon!
@@ -32,9 +30,19 @@ class PokeDetailVC: UIViewController {
         mainImage.image = UIImage(named: "\(pokemon.pokedexId)")
         
         pokemon.downloadDetails { () -> () in
-            
+            self.updateUI()
         }
         
+    }
+    func updateUI(){
+        typeLabel.text = pokemon.type
+        attackLabel.text = String(pokemon.stats["attack"]!)
+        defenseLabel.text = String(pokemon.stats["defense"]!)
+        heightLabel.text = String(pokemon.stats["height"]!)
+        weightLabel.text = String(pokemon.stats["weight"]!)
+        pokeIdLabel.text = String(pokemon.pokedexId)
+
+        print(pokemon.nextEvolutionText)
     }
 
     @IBAction func goBack(sender: UIButton) {
