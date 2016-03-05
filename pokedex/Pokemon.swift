@@ -16,9 +16,10 @@ class Pokemon {
     private var _type: String!
     private var _pokemonURL: String!
     private var _evolutionChain: String!
-    private var _nextEvolutionId: String!
-    private var _thirdEvolutionId: String!
+    private var _evolutionChainId = [String]()
     private var _stats = [String:Int]()
+    private var _didFinishDownloadingBio = false
+    private var _didFinishDownloadingEvo = false
     
     var name: String {
         return _name
@@ -32,22 +33,16 @@ class Pokemon {
         return _type
     }
     
-    var nextEvolutionText: String{
-        print(_evolutionChain.rangeOfString(_name))
-        let str = _evolutionChain.substringWithRange(Range<String.Index>(start:(_evolutionChain.rangeOfString(_name)?.endIndex)!, end: _evolutionChain.endIndex))
-        return String(str.characters.dropFirst())
-    }
-    
-    var nextEvolutionId: String{
-        return _nextEvolutionId
-    }
-    
-    var thirdEvolutionId: String{
-        return _thirdEvolutionId
-    }
-    
     var stats: Dictionary<String,Int> {
         return _stats
+    }
+    
+    var evolutionChain: Array<String>{
+        return _evolutionChain.componentsSeparatedByString(",")
+    }
+    
+    var evolutionChainId: Array<String> {
+        return _evolutionChainId
     }
     
     init(name: String, pokedexId: Int){
@@ -63,6 +58,7 @@ class Pokemon {
             switch response.result {
             case .Success(let data):
                 let result = data
+                self._didFinishDownloadingBio = true
                 if let dict = result as? Dictionary<String,AnyObject> {
                     if let weight = dict["weight"] as? Int {
                         self._stats["weight"] = weight
@@ -95,14 +91,14 @@ class Pokemon {
                     if let types = dict["types"] as? [Dictionary<String,AnyObject>] {
                         if let type = types[0]["type"] {
                             if let name = type["name"] {
-                                self._type = name as! String
+                                self._type = ("\(name as! String)").capitalizedString
                             }
                         }
                         if types.count > 1 {
                             for var x = 1; x < types.count; x++ {
                                 if let type = types[x]["type"] {
                                     if let name = type["name"] {
-                                        self._type! += "/\(name as! String)"
+                                        self._type! += "/\(name as! String)".capitalizedString
                                     }
                                     
                                 }
@@ -112,7 +108,7 @@ class Pokemon {
                         self._type = ""
                     }
                 }
-                completed()
+                if self._didFinishDownloadingEvo == true { completed() }
 
             case .Failure(let error):
                 print("Request failed with error: \(error)")
@@ -134,10 +130,15 @@ class Pokemon {
                             Alamofire.request(.GET, evoURL).responseJSON{ response in
                                 switch response.result{
                                 case .Success(let data):
+                                    self._didFinishDownloadingEvo = true
                                     if let result = data as? Dictionary<String,AnyObject>{
                                         if let chain = result["chain"] as? Dictionary<String,AnyObject>{
                                             if let species = chain["species"] as? Dictionary<String,AnyObject> {
                                                 self._evolutionChain! += "\(species["name"] as! String)"
+                                                var nextEvo = species["url"] as! String
+                                                nextEvo = nextEvo.stringByReplacingOccurrencesOfString("http://pokeapi.co/api/v2/pokemon-species/", withString: "")
+                                                nextEvo = nextEvo.stringByReplacingOccurrencesOfString("/", withString: "")
+                                                self._evolutionChainId.append(nextEvo)
                                             }
                                             if let evolvesTo = chain["evolves_to"] as? [Dictionary<String,AnyObject>] where evolvesTo.count > 0 {
                                                 if let species = evolvesTo[0]["species"] as? Dictionary<String,AnyObject> {
@@ -145,24 +146,22 @@ class Pokemon {
                                                     var nextEvo = species["url"] as! String
                                                     nextEvo = nextEvo.stringByReplacingOccurrencesOfString("http://pokeapi.co/api/v2/pokemon-species/", withString: "")
                                                     nextEvo = nextEvo.stringByReplacingOccurrencesOfString("/", withString: "")
-                                                    self._nextEvolutionId = nextEvo
-                                                    
+                                                    self._evolutionChainId.append(nextEvo)
                                                     if let thirdEvo = evolvesTo[0]["evolves_to"] as? [Dictionary<String,AnyObject>] where thirdEvo.count > 0 {
                                                         if let species = thirdEvo[0]["species"] as? Dictionary<String,AnyObject> {
                                                             self._evolutionChain! += ",\(species["name"] as! String)"
                                                             var nextEvo = species["url"] as! String
                                                             nextEvo = nextEvo.stringByReplacingOccurrencesOfString("http://pokeapi.co/api/v2/pokemon-species/", withString: "")
                                                             nextEvo = nextEvo.stringByReplacingOccurrencesOfString("/", withString: "")
-                                                            self._thirdEvolutionId = nextEvo
+                                                            self._evolutionChainId.append(nextEvo)
                                                         }
                                                     }
                                                     
                                                 }
-                                            } else {
-                                                self._evolutionChain = "Doesn't evolve."
                                             }
                                         }
                                     }
+                                    if self._didFinishDownloadingBio == true { completed() }
                                 case .Failure(let error):
                                     print("Request failed with error: \(error)")
                                 }

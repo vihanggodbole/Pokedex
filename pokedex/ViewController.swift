@@ -28,6 +28,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         collection.showsVerticalScrollIndicator = false
         searchBar.returnKeyType = UIReturnKeyType.Done
+        (searchBar.valueForKey("searchField") as? UITextField)?.textColor = UIColor.whiteColor()
         parsePokemonCSV()
     }
     
