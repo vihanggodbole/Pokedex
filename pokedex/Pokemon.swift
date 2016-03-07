@@ -12,7 +12,7 @@ import Alamofire
 class Pokemon {
     private var _name: String!
     private var _pokedexId: Int!
-    //private var _description: String!
+    private var _description: String!
     private var _type: String!
     private var _pokemonURL: String!
     private var _evolutionChain: String!
@@ -20,6 +20,7 @@ class Pokemon {
     private var _stats = [String:Int]()
     private var _didFinishDownloadingBio = false
     private var _didFinishDownloadingEvo = false
+    private var _didFinishDownloadingDesc = false
     
     var name: String {
         return _name
@@ -27,6 +28,10 @@ class Pokemon {
     
     var pokedexId: Int {
         return _pokedexId
+    }
+    
+    var description: String {
+        return _description
     }
     
     var type: String {
@@ -108,7 +113,7 @@ class Pokemon {
                         self._type = ""
                     }
                 }
-                if self._didFinishDownloadingEvo == true { completed() }
+                if self._didFinishDownloadingEvo == true && self._didFinishDownloadingDesc == true { completed() }
 
             case .Failure(let error):
                 print("Request failed with error: \(error)")
@@ -123,6 +128,15 @@ class Pokemon {
             switch response.result {
             case .Success(let data):
                 if let dict = data as? Dictionary<String,AnyObject>{
+                    if let flavorText = dict["flavor_text_entries"] as? [Dictionary<String,AnyObject>] {
+                        if let engDescription = flavorText[1]["flavor_text"] where flavorText[1]["language"]!["name"] as? String == "en" {
+                            self._description = engDescription as! String
+                        } else {
+                            self._description = "Description not found."
+                        }
+                        self._didFinishDownloadingDesc = true
+                        if self._didFinishDownloadingBio == true && self._didFinishDownloadingEvo == true { completed() }
+                    }
                     if let evolutionChain = dict["evolution_chain"] as? Dictionary<String,String>{
                         if let evolutionChainString = evolutionChain["url"]{
                             //calling evolution chain .GET from the url obtained from species.
@@ -161,7 +175,7 @@ class Pokemon {
                                             }
                                         }
                                     }
-                                    if self._didFinishDownloadingBio == true { completed() }
+                                    if self._didFinishDownloadingBio == true && self._didFinishDownloadingDesc == true { completed() }
                                 case .Failure(let error):
                                     print("Request failed with error: \(error)")
                                 }

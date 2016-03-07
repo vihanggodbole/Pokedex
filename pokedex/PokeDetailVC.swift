@@ -81,6 +81,7 @@ class PokeDetailVC: UIViewController {
         speedLabel.text = String(pokemon.stats["speed"]!)
         specialAttackLabel.text = String(pokemon.stats["specialAttack"]!)
         specialDefenseLabel.text = String(pokemon.stats["specialDefense"]!)
+        descriptionLabel.text = pokemon.description
     }
     
     func updateEvoUI(){
